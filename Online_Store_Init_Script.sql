@@ -45,9 +45,28 @@ USE OnlineStore
         CPF CHAR(11) NOT NULL,
         email NVARCHAR(255) NOT NULL,
         password NVARCHAR(64) NOT NULL,
+        cellphone NVARCHAR(12) NOT NULL,
+        birthdate DATETIME NOT NULL,
+        sex CHAR(1) NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
       )
+
+      END
+
+  GO
+    IF OBJECT_ID('customer_addresses') IS NULL 
+      BEGIN
+
+      CREATE TABLE customer_addresses (
+        id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+        customer_id UNIQUEIDENTIFIER NOT NULL,
+        [address] NVARCHAR(400) NOT NULL,
+        [default] BIT,
+        [created_at] [datetime] NOT NULL,
+        [updated_at] [datetime] NOT NULL
+        CONSTRAINT FK_CUSTADDRESSES_CUSTOMER FOREIGN KEY (customer_id) REFERENCES customers(id)
+    )
 
       END
 
@@ -188,6 +207,22 @@ END
           UPDATE t
           SET t.updated_at = CURRENT_TIMESTAMP
           FROM customers AS t
+          inner join inserted as i
+          on t.id = i.id
+        END
+    END')
+  END
+
+   GO
+ IF NOT EXISTS (SELECT 1 FROM SYS.TRIGGERS WHERE NAME = 'TRG_UPDATE_UPDATEDAT_CST_COLLUMN')
+  BEGIN
+  EXEC('CREATE TRIGGER TRG_UPDATE_UPDATEDAT_CST_COLLUMN ON customer_addresses AFTER UPDATE AS
+    BEGIN
+      IF NOT UPDATE(updated_at)
+        BEGIN
+          UPDATE t
+          SET t.updated_at = CURRENT_TIMESTAMP
+          FROM customer_addresses AS t
           inner join inserted as i
           on t.id = i.id
         END
