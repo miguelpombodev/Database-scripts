@@ -47,6 +47,7 @@ BEGIN
     CREATE TABLE store_types (
         Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
         Name VARCHAR(50) NOT NULL,
+        Avatar NVARCHAR(MAX),
         Created_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
         Updated_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
     )
@@ -65,7 +66,8 @@ BEGIN
         Open_At TIME NOT NULL,
         Closed_At TIME NOT NULL,
         [Address] NVARCHAR(1000) NOT NULL,
-        CNPJ VARCHAR(14) NOT NULL,
+        CNPJ VARCHAR(16) NOT NULL,
+        CEP VARCHAR(8) NOT NULL,
         Created_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
         Updated_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
         CONSTRAINT FK_STORE_STORE_TYPE_ID FOREIGN KEY (Store_Type_Id) REFERENCES store_types(Id)
@@ -105,6 +107,7 @@ BEGIN
         Store_Category_Id UNIQUEIDENTIFIER NOT NULL,
         [Weight] VARCHAR(8),
         People_Served INT,
+        Avatar nvarchar(150) DEFAULT 'default_product.png',
         Created_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
         Updated_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
         CONSTRAINT FK_PRODUCT_STORE FOREIGN KEY (Store_Id) REFERENCES stores(Id),
@@ -185,3 +188,209 @@ CREATE NONCLUSTERED INDEX IDX_ORDERS_CARTID ON orders(Cart_id)
 
 CREATE NONCLUSTERED INDEX IDX_STORERATES_STOREID ON store_rates(Store_Id)
 CREATE NONCLUSTERED INDEX IDX_STORERATES_ORDERID ON store_rates(Order_Id)
+
+
+PRINT('-------------- INSERTING DATA --------------')
+insert into store_types (Name, Avatar, Created_At, Updated_At)
+values
+	('Lanches', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/lanches_HC15.png?imwidth=256',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Chinesa', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/chinesa_cc11.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Italiana', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/italiana_qyJW.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Japonesa', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/japonesa_FP14.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Mexicana', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Sopas e Caldos', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Vegetariana', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/vegetariana_XGvO.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Frutos do Mar', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Árabe', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/arabe_PbzV.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Brasileira', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/brasileira1XfT_5HRd.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Padarias', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/padarias_O8Ek.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+
+insert into stores (
+    Id, Name, Avatar, Store_Type_Id, Description, Order_Min_Value, Open_At, Closed_At, Address, CNPJ, CEP
+) values
+      (newid(), 'McDonald''s', 'https://seeklogo.com/images/M/mcdonald-s-logo-255A7B5646-seeklogo.com.png', 1, 'A Arcos Dorados é a maior franquia independente direitos exclusivos de possuir, operar e conceder o McDonald’s do mundo e a principal rede de alimentação rápida em toda América Latina e Caribe. A companhia tem as franquias de restaurantes McDonald''s em 20 países e territórios, incluindo Argentina, Aruba, Brasil, Chile, Colômbia, Costa Rica, Curaçao, Equador, Guiana Francesa, Guadalupe, Martinica, México, Panamá, Peru, Porto Rico, St. Croix, St. Thomas, Trinidad & Tobago, Uruguai e Venezuela.', 15.00, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '02:00 AM'), 'Rua 36, 36 Norte', '00000000/0000-00','12345678'),
+      (newid(), 'China in Box', 'https://seeklogo.com/images/C/china-in-box-logo-D1BF9CC471-seeklogo.com.png', 2, 'É uma rede de fast-food de comida chinesa, inaugurada em 1992 no bairro paulistano de Moema por Robinson Shiba e presente em várias cidades do Brasil, com 145 lojas.', 15, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '21:45 PM'), 'R. 9 Norte, lote 6/8 loja, 01', '1958765325416532', '71953970'),
+      (newid(), 'Burger King', 'https://seeklogo.com/images/B/burger-king-new-2021-logo-F43BDE45C7-seeklogo.com.png', 1, 'É uma rede de restaurantes especializada em fast-food, fundada nos Estados Unidos por James McLamore e David Edgerton, que abriram a primeira unidade em Miami, Flórida.', 20, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '04:00 AM'), 'St. A Sul QSA 3/5 PPL, Área Especial 1 s/n', '1958765325416532', '72015034'),
+      (newid(), 'La Mole', 'https://seeklogo.com/images/R/Restaurante_La_Mole-logo-F9485B7327-seeklogo.com.gif', 3, 'Clássico restaurante italiano inaugurado no Estado do Rio de Janeiro, famoso por seus pratos clássicos agora com poucos cliques direto para sua casa.', 20, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '00:00 AM'), 'R. Dias da Rocha, 31 - loja B', '1958765325416532', '22051020'),
+      (newid(), 'Taco Bell', 'https://seeklogo.com/images/T/taco-bell-logo-E3BE785EC0-seeklogo.com.png', 5, 'É uma cadeia estadunidense de restaurantes de fast-food, inspirada pela culinária mexicana e fundada por Glen Bell', 15, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '02:00 AM'), 'Av. Pastor Martin Luther King Jr., 126', '1958765325416532', '20765630'),
+      (newid(), 'Koni Japa', 'https://static.ifood-static.com.br/image/upload/t_high/logosgde/19651995-9e84-4618-b87a-9367502e8873/202203081441_z1Oq_i.jpg', 4, 'É uma rede de franquias de restaurantes fast-food do Brasil que serve pratos e comidas da culinária japonesa, notoriamente variedades de temakis, sashimis e yakissoba.', 20, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '01:00 AM'), 'Asa Sul Comércio Local Sul 209 BL B', '1958765325416532', '70272520')
+
+
+insert into stores_categories (Id, Title, Store_Id)
+values
+    (newid(), 'Promoções', (select Id from stores where Name = 'McDonald''s')),
+    (newid(), 'Sanduíches', (select Id from stores where Name = 'McDonald''s')),
+    (newid(), 'Acompanhamentos', (select Id from stores where Name = 'McDonald''s')),
+    (newid(), 'Sobremesas', (select Id from stores where Name = 'McDonald''s')),
+    (newid(), 'Bebidas', (select Id from stores where Name = 'McDonald''s')),
+    (newid(), 'Favoritos', (select Id from stores where Name = 'Burger King')),
+    (newid(), 'Whoppers Especiais', (select Id from stores where Name = 'Burger King')),
+    (newid(), 'Acompanhamentos', (select Id from stores where Name = 'Burger King')),
+    (newid(), 'Bebidas', (select Id from stores where Name = 'Burger King')),
+    (newid(), 'Pokes', (select Id from stores where Name = 'Koni Japa')),
+    (newid(), 'Temakis', (select Id from stores where Name = 'Koni Japa')),
+    (newid(), 'Rolls', (select Id from stores where Name = 'Koni Japa')),
+    (newid(), 'Sushis e Sashimis', (select Id from stores where Name = 'Koni Japa')),
+    (newid(), 'Combinados', (select Id from stores where Name = 'Koni Japa'))
+
+
+insert into products (Id, Name, Value, Store_Id, Description, Store_Category_Id, Weight, People_Served, Avatar)
+values
+    (
+        newid(),
+        'Big Mac',
+        29.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'Dois hambúrgueres (100% carne bovina), alface americana, queijo cheddar, maionese Big Mac, cebola, picles e pão com gergelim',
+        (select Id from stores_categories where Title = 'Sanduíches' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180422_1lkhqtbmex5.png'
+    ),
+    (
+        newid(),
+        'Quarterão Com Queijo',
+        28.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'Um hambúrguer (100% carne bovina), queijo cheddar, picles, cebola, ketchup, mostarda e pão com gergelim',
+        (select Id from stores_categories where Title = 'Sanduíches' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180423_2rz36omws9h.png'
+   ),
+    (
+        newid(),
+        'Cheddar McMelt',
+        29.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'Um hambúrguer (100% carne bovina), molho lácteo com queijo tipo cheddar, cebola ao molho shoyu e pão escuro com gergelim',
+        (select Id from stores_categories where Title = 'Sanduíches' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406260428_8szllyalux6.png'
+   ),
+    (
+        newid(),
+        'McChicken',
+        27.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'Frango empanado, maionese, alface americana e pão com gergelim',
+        (select Id from stores_categories where Title = 'Sanduíches' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180423_n1qazfp2gg9.png'
+   ),
+    (
+        newid(),
+        'McFritas Cheddar Bacon',
+        20.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'A batata frita mais famosa do mundo, agora com molho com queijo tipo cheddar e bacon crispy. Não dá para resistir, experimente!',
+        (select Id from stores_categories where Title = 'Acompanhamentos' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180423_n1qazfp2gg9.png'
+   ),
+    (
+        newid(),
+        'McFritas Grande',
+        27.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'Deliciosas batatas selecionadas, fritas, crocantes por fora, macias por dentro, douradas, irresistíveis, saborosas, famosas, e todos os outros adjetivos positivos que você quiser dar',
+        (select Id from stores_categories where Title = 'Acompanhamentos' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180423_ngukgmyczvd.png'
+   ),
+    (
+        newid(),
+        'McFritas Média',
+        27.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'Deliciosas batatas selecionadas, fritas, crocantes por fora, macias por dentro, douradas, irresistíveis, saborosas, famosas, e todos os outros adjetivos positivos que você quiser dar',
+        (select Id from stores_categories where Title = 'Acompanhamentos' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180423_svr1w9rakl.png'
+   ),
+        (
+        newid(),
+        'McFritas Pequena',
+        27.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'Deliciosas batatas selecionadas, fritas, crocantes por fora, macias por dentro, douradas, irresistíveis, saborosas, famosas, e todos os outros adjetivos positivos que você quiser dar',
+        (select Id from stores_categories where Title = 'Acompanhamentos' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180423_vpygltkllj.png'
+   ),
+        (
+        newid(),
+        'Chicken McNuggets 15 unidades',
+        27.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'Crocantes, leves e deliciosos. Os frangos empanados mais irresistíveis do Mcdonald’s agora na versão Mega, ideal para compartilhar. Composto por 15 unidades de Chicken McNuggets',
+        (select Id from stores_categories where Title = 'Acompanhamentos' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180423_ul87qvwq4fr.png'
+   ),
+        (
+        newid(),
+        'Coca-Cola 500ml',
+        12.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'Bebida gelada na medida certa para matar sua sede. Refrescante Coca-Cola 500ml',
+        (select Id from stores_categories where Title = 'Bebidas' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406260429_33ol9h9496q.png'
+   ),
+        (
+        newid(),
+        'Fanta Guaraná 500ml',
+        12.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'Bebida gelada na medida certa para matar sua sede. Refrescante Fanta Guaraná 500ml',
+        (select Id from stores_categories where Title = 'Bebidas' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180423_ddngtiptyus.png'
+   ),
+        (
+        newid(),
+        'Sprite Sem Açúcar 500ml',
+        12.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'Bebida gelada na medida certa para matar sua sede. Refrescante Sprite Sem Açúcar 500ml',
+        (select Id from stores_categories where Title = 'Bebidas' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180423_nmce2201iuk.png'
+   ),
+        (
+        newid(),
+        'McShake Ovomaltine 400ml',
+        12.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'O novo McShake é feito com leite e batido na hora com o delicioso Ovomaltine',
+        (select Id from stores_categories where Title = 'Bebidas' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180423_r39as9fnhl.png'
+   ),
+        (
+        newid(),
+        'McShake Chocolate 400ml',
+        12.90,
+        (select Id from stores where name = 'McDonald''s'),
+        'O novo McShake é feito com leite e batido na hora com o delicioso chocolate Kopenhagen',
+        (select Id from stores_categories where Title = 'Bebidas' and Store_Id = (select Id from stores where Name = 'McDonald''s')),
+        NULL,
+        NULL,
+        'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180423_qut3xbz172.png'
+   )
+
+
+
+
