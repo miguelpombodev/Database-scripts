@@ -197,10 +197,10 @@ values
 	('Chinesa', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/chinesa_cc11.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 	('Italiana', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/italiana_qyJW.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 	('Japonesa', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/japonesa_FP14.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-	('Mexicana', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-	('Sopas e Caldos', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Mexicana', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Sopas e Caldos', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 	('Vegetariana', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/vegetariana_XGvO.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-	('Frutos do Mar', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Frutos do Mar', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 	('Árabe', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/arabe_PbzV.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 	('Brasileira', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/brasileira1XfT_5HRd.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 	('Padarias', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/padarias_O8Ek.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
