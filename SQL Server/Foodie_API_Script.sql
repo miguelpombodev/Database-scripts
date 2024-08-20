@@ -4,7 +4,7 @@ BEGIN
     CREATE DATABASE Foodie_DB COLLATE Latin1_general_CI_AI;
 END
 
-GO   
+GO
 USE Foodie_DB
 
 
@@ -13,11 +13,11 @@ PRINT('-------------- CREATING TABLES --------------')
 GO
 
 IF OBJECT_ID('users') IS NULL
-BEGIN 
+BEGIN
     CREATE TABLE users (
         Id UNIQUEIDENTIFIER PRIMARY KEY,
         Name NVARCHAR(200) NOT NULL,
-        Phone VARCHAR(69) NOT NULL UNIQUE,
+        Phone VARCHAR(12) NOT NULL UNIQUE,
         Email VARCHAR(100) NOT NULL UNIQUE,
         CPF VARCHAR(69) NOT NULL UNIQUE,
         Created_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -122,10 +122,10 @@ BEGIN
     CREATE TABLE carts (
         Id UNIQUEIDENTIFIER PRIMARY KEY,
         Product_Id UNIQUEIDENTIFIER NOT NULL,
-        [User_Id] UNIQUEIDENTIFIER NOT NULL, 
+        [User_Id] UNIQUEIDENTIFIER NOT NULL,
         Product_Amount INT NOT NULL,
         Created_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        Updated_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,               
+        Updated_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
         CONSTRAINT FK_CARTS_USERS FOREIGN KEY ([User_Id]) REFERENCES users(Id),
         CONSTRAINT FK_CARTS_PRODUCT FOREIGN KEY (Product_Id) REFERENCES products(Id),
     )
@@ -170,27 +170,44 @@ BEGIN
         CONSTRAINT FK_STORERATE_ORDERS FOREIGN KEY (Order_Id) REFERENCES orders(Id)
     )
 END
-    
+
 
 PRINT('-------------- CREATING INDEXES --------------')
 
-CREATE NONCLUSTERED INDEX IDX_STORE_NAME ON stores([Name])
-CREATE NONCLUSTERED INDEX IDX_STORE_CNPJ ON stores(CNPJ)
+IF (SELECT COUNT(1) FROM sys.indexes WHERE object_id = OBJECT_ID('stores') AND name like 'IDX_%') = 0
+BEGIN
+  CREATE NONCLUSTERED INDEX IDX_STORE_NAME ON stores([Name])
+  CREATE NONCLUSTERED INDEX IDX_STORE_CNPJ ON stores(CNPJ)
+END
 
+IF (SELECT COUNT(1) FROM sys.indexes WHERE object_id = OBJECT_ID('stores_categories') AND name like 'IDX_%') = 0
+BEGIN
 CREATE NONCLUSTERED INDEX IDX_STORECATEGORIES_TITLE ON stores_categories(Title)
 CREATE NONCLUSTERED INDEX IDX_STORECATEGORIES_STOREID ON stores_categories(Store_Id)
+END
 
+IF (SELECT COUNT(1) FROM sys.indexes WHERE object_id = OBJECT_ID('carts') AND name like 'IDX_%') = 0
+BEGIN
 CREATE NONCLUSTERED INDEX IDX_CARTS_PRODUCTID ON carts(Product_Id)
 CREATE NONCLUSTERED INDEX IDX_CARTS_USERID ON carts([User_id])
+END
 
-CREATE NONCLUSTERED INDEX IDX_ORDERS_USERID ON orders([User_id])
-CREATE NONCLUSTERED INDEX IDX_ORDERS_CARTID ON orders(Cart_id)
+IF (SELECT COUNT(1) FROM sys.indexes WHERE object_id = OBJECT_ID('orders') AND name like 'IDX_%') = 0
+BEGIN
+  CREATE NONCLUSTERED INDEX IDX_ORDERS_USERID ON orders([User_id])
+  CREATE NONCLUSTERED INDEX IDX_ORDERS_CARTID ON orders(Cart_id)
+END
 
-CREATE NONCLUSTERED INDEX IDX_STORERATES_STOREID ON store_rates(Store_Id)
-CREATE NONCLUSTERED INDEX IDX_STORERATES_ORDERID ON store_rates(Order_Id)
-
+IF (SELECT COUNT(1) FROM sys.indexes WHERE object_id = OBJECT_ID('store_rates') AND name like 'IDX_%') = 0
+BEGIN
+  CREATE NONCLUSTERED INDEX IDX_STORERATES_STOREID ON store_rates(Store_Id)
+  CREATE NONCLUSTERED INDEX IDX_STORERATES_ORDERID ON store_rates(Order_Id)
+END
 
 PRINT('-------------- INSERTING DATA --------------')
+IF (SELECT COUNT(1) FROM store_types) = 0
+BEGIN
+PRINT('-------------- INSERTING STORE TYPES --------------')
 insert into store_types (Name, Avatar, Created_At, Updated_At)
 values
 	('Lanches', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/lanches_HC15.png?imwidth=256',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
@@ -204,7 +221,11 @@ values
 	('Árabe', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/arabe_PbzV.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 	('Brasileira', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/brasileira1XfT_5HRd.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 	('Padarias', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/padarias_O8Ek.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+END
 
+IF (SELECT COUNT(1) FROM stores) = 0
+BEGIN
+PRINT('-------------- INSERTING STORES --------------')
 insert into stores (
     Id, Name, Avatar, Store_Type_Id, Description, Order_Min_Value, Open_At, Closed_At, Address, CNPJ, CEP
 ) values
@@ -214,8 +235,11 @@ insert into stores (
       (newid(), 'La Mole', 'https://seeklogo.com/images/R/Restaurante_La_Mole-logo-F9485B7327-seeklogo.com.gif', 3, 'Clássico restaurante italiano inaugurado no Estado do Rio de Janeiro, famoso por seus pratos clássicos agora com poucos cliques direto para sua casa.', 20, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '00:00 AM'), 'R. Dias da Rocha, 31 - loja B', '1958765325416532', '22051020'),
       (newid(), 'Taco Bell', 'https://seeklogo.com/images/T/taco-bell-logo-E3BE785EC0-seeklogo.com.png', 5, 'É uma cadeia estadunidense de restaurantes de fast-food, inspirada pela culinária mexicana e fundada por Glen Bell', 15, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '02:00 AM'), 'Av. Pastor Martin Luther King Jr., 126', '1958765325416532', '20765630'),
       (newid(), 'Koni Japa', 'https://static.ifood-static.com.br/image/upload/t_high/logosgde/19651995-9e84-4618-b87a-9367502e8873/202203081441_z1Oq_i.jpg', 4, 'É uma rede de franquias de restaurantes fast-food do Brasil que serve pratos e comidas da culinária japonesa, notoriamente variedades de temakis, sashimis e yakissoba.', 20, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '01:00 AM'), 'Asa Sul Comércio Local Sul 209 BL B', '1958765325416532', '70272520')
+END
 
-
+IF (SELECT COUNT(1) FROM stores_categories) = 0
+BEGIN
+PRINT('-------------- INSERTING STORE CATEGORIES --------------')
 insert into stores_categories (Id, Title, Store_Id)
 values
     (newid(), 'Promoções', (select Id from stores where Name = 'McDonald''s')),
@@ -232,8 +256,11 @@ values
     (newid(), 'Rolls', (select Id from stores where Name = 'Koni Japa')),
     (newid(), 'Sushis e Sashimis', (select Id from stores where Name = 'Koni Japa')),
     (newid(), 'Combinados', (select Id from stores where Name = 'Koni Japa'))
+END
 
-
+IF (SELECT COUNT(1) FROM products) = 0
+PRINT('-------------- INSERTING PRODUCTS VALUES --------------')
+BEGIN
 insert into products (Id, Name, Value, Store_Id, Description, Store_Category_Id, Weight, People_Served, Avatar)
 values
     (
@@ -390,7 +417,7 @@ values
         NULL,
         'https://static.ifood-static.com.br/image/upload/t_low/pratos/f1613b9f-7a5f-49c4-9687-2a3798c26092/202406180423_qut3xbz172.png'
    )
-
+END
 
 
 
