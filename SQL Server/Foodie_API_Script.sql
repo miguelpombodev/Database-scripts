@@ -7,6 +7,7 @@ END
 GO
 USE Foodie_DB
 
+PRINT('-------------- START OF STRUCTURE SCRIPT --------------')
 
 PRINT('-------------- CREATING TABLES --------------')
 
@@ -205,7 +206,8 @@ BEGIN
 END
 
 PRINT('-------------- INSERTING DATA --------------')
-IF (SELECT COUNT(1) FROM store_types) = 0
+IF NOT EXISTS(SELECT TOP 1 1
+              FROM store_types)
 BEGIN
 PRINT('-------------- INSERTING STORE TYPES --------------')
 insert into store_types (Name, Avatar, Created_At, Updated_At)
@@ -223,7 +225,8 @@ values
 	('Padarias', 'https://static.ifood-static.com.br/image/upload/t_medium/discoveries/padarias_O8Ek.png?imwidth=256', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
-IF (SELECT COUNT(1) FROM stores) = 0
+IF NOT EXISTS(SELECT TOP 1 1
+              FROM stores)
 BEGIN
 PRINT('-------------- INSERTING STORES --------------')
 insert into stores (
@@ -237,7 +240,8 @@ insert into stores (
       (newid(), 'Koni Japa', 'https://static.ifood-static.com.br/image/upload/t_high/logosgde/19651995-9e84-4618-b87a-9367502e8873/202203081441_z1Oq_i.jpg', 4, 'É uma rede de franquias de restaurantes fast-food do Brasil que serve pratos e comidas da culinária japonesa, notoriamente variedades de temakis, sashimis e yakissoba.', 20, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '01:00 AM'), 'Asa Sul Comércio Local Sul 209 BL B', '1958765325416532', '70272520')
 END
 
-IF (SELECT COUNT(1) FROM stores_categories) = 0
+IF NOT EXISTS(SELECT TOP 1 1
+              FROM stores_categories)
 BEGIN
 PRINT('-------------- INSERTING STORE CATEGORIES --------------')
 insert into stores_categories (Id, Title, Store_Id)
@@ -258,9 +262,10 @@ values
     (newid(), 'Combinados', (select Id from stores where Name = 'Koni Japa'))
 END
 
-IF (SELECT COUNT(1) FROM products) = 0
-PRINT('-------------- INSERTING PRODUCTS VALUES --------------')
+IF NOT EXISTS(SELECT TOP 1 1
+              FROM products)
 BEGIN
+PRINT('-------------- INSERTING PRODUCTS CATEGORIES --------------')
 insert into products (Id, Name, Value, Store_Id, Description, Store_Category_Id, Weight, People_Served, Avatar)
 values
     (
@@ -419,5 +424,5 @@ values
    )
 END
 
-
+PRINT('-------------- FINISH OF STRUCTURE SCRIPT --------------')
 
