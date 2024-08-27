@@ -17,6 +17,7 @@ IF OBJECT_ID('users') IS NULL
 BEGIN
     CREATE TABLE users (
         Id UNIQUEIDENTIFIER PRIMARY KEY,
+        Avatar NVARCHAR(150) DEFAULT 'default.png' NOT NULL,
         Name NVARCHAR(200) NOT NULL,
         Phone VARCHAR(12) NOT NULL UNIQUE,
         Email VARCHAR(100) NOT NULL UNIQUE,
@@ -69,6 +70,10 @@ BEGIN
         [Address] NVARCHAR(1000) NOT NULL,
         CNPJ VARCHAR(16) NOT NULL,
         CEP VARCHAR(8) NOT NULL,
+        Store_Min_Delivery_Time VARCHAR(3) NOT NULL,
+	Store_Max_Delivery_Time VARCHAR(3) NOT NULL,
+	Store_Delivery_Fee DECIMAL(4,2) DEFAULT 0.00,
+	Store_Rate DECIMAL(2,1) DEFAULT 0.0,
         Created_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
         Updated_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
         CONSTRAINT FK_STORE_STORE_TYPE_ID FOREIGN KEY (Store_Type_Id) REFERENCES store_types(Id)
@@ -230,14 +235,14 @@ IF NOT EXISTS(SELECT TOP 1 1
 BEGIN
 PRINT('-------------- INSERTING STORES --------------')
 insert into stores (
-    Id, Name, Avatar, Store_Type_Id, Description, Order_Min_Value, Open_At, Closed_At, Address, CNPJ, CEP
+    Id, Name, Avatar, Store_Type_Id, Description, Order_Min_Value, Open_At, Closed_At, Address, CNPJ, CEP, Store_Rate, Store_Delivery_Fee, Store_Min_Delivery_Time, Store_Max_Delivery_Time
 ) values
-      (newid(), 'McDonald''s', 'https://seeklogo.com/images/M/mcdonald-s-logo-255A7B5646-seeklogo.com.png', 1, 'A Arcos Dorados é a maior franquia independente direitos exclusivos de possuir, operar e conceder o McDonald’s do mundo e a principal rede de alimentação rápida em toda América Latina e Caribe. A companhia tem as franquias de restaurantes McDonald''s em 20 países e territórios, incluindo Argentina, Aruba, Brasil, Chile, Colômbia, Costa Rica, Curaçao, Equador, Guiana Francesa, Guadalupe, Martinica, México, Panamá, Peru, Porto Rico, St. Croix, St. Thomas, Trinidad & Tobago, Uruguai e Venezuela.', 15.00, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '02:00 AM'), 'Rua 36, 36 Norte', '00000000/0000-00','12345678'),
-      (newid(), 'China in Box', 'https://seeklogo.com/images/C/china-in-box-logo-D1BF9CC471-seeklogo.com.png', 2, 'É uma rede de fast-food de comida chinesa, inaugurada em 1992 no bairro paulistano de Moema por Robinson Shiba e presente em várias cidades do Brasil, com 145 lojas.', 15, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '21:45 PM'), 'R. 9 Norte, lote 6/8 loja, 01', '1958765325416532', '71953970'),
-      (newid(), 'Burger King', 'https://seeklogo.com/images/B/burger-king-new-2021-logo-F43BDE45C7-seeklogo.com.png', 1, 'É uma rede de restaurantes especializada em fast-food, fundada nos Estados Unidos por James McLamore e David Edgerton, que abriram a primeira unidade em Miami, Flórida.', 20, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '04:00 AM'), 'St. A Sul QSA 3/5 PPL, Área Especial 1 s/n', '1958765325416532', '72015034'),
-      (newid(), 'La Mole', 'https://seeklogo.com/images/R/Restaurante_La_Mole-logo-F9485B7327-seeklogo.com.gif', 3, 'Clássico restaurante italiano inaugurado no Estado do Rio de Janeiro, famoso por seus pratos clássicos agora com poucos cliques direto para sua casa.', 20, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '00:00 AM'), 'R. Dias da Rocha, 31 - loja B', '1958765325416532', '22051020'),
-      (newid(), 'Taco Bell', 'https://seeklogo.com/images/T/taco-bell-logo-E3BE785EC0-seeklogo.com.png', 5, 'É uma cadeia estadunidense de restaurantes de fast-food, inspirada pela culinária mexicana e fundada por Glen Bell', 15, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '02:00 AM'), 'Av. Pastor Martin Luther King Jr., 126', '1958765325416532', '20765630'),
-      (newid(), 'Koni Japa', 'https://static.ifood-static.com.br/image/upload/t_high/logosgde/19651995-9e84-4618-b87a-9367502e8873/202203081441_z1Oq_i.jpg', 4, 'É uma rede de franquias de restaurantes fast-food do Brasil que serve pratos e comidas da culinária japonesa, notoriamente variedades de temakis, sashimis e yakissoba.', 20, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '01:00 AM'), 'Asa Sul Comércio Local Sul 209 BL B', '1958765325416532', '70272520')
+      (newid(), 'McDonald''s', 'https://seeklogo.com/images/M/mcdonald-s-logo-255A7B5646-seeklogo.com.png', 1, 'A Arcos Dorados é a maior franquia independente direitos exclusivos de possuir, operar e conceder o McDonald’s do mundo e a principal rede de alimentação rápida em toda América Latina e Caribe. A companhia tem as franquias de restaurantes McDonald''s em 20 países e territórios, incluindo Argentina, Aruba, Brasil, Chile, Colômbia, Costa Rica, Curaçao, Equador, Guiana Francesa, Guadalupe, Martinica, México, Panamá, Peru, Porto Rico, St. Croix, St. Thomas, Trinidad & Tobago, Uruguai e Venezuela.', 15.00, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '02:00 AM'), 'Rua 36, 36 Norte', '00000000/0000-00','12345678', 0.0, 0.00, '30', '50'),
+      (newid(), 'China in Box', 'https://seeklogo.com/images/C/china-in-box-logo-D1BF9CC471-seeklogo.com.png', 2, 'É uma rede de fast-food de comida chinesa, inaugurada em 1992 no bairro paulistano de Moema por Robinson Shiba e presente em várias cidades do Brasil, com 145 lojas.', 15, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '21:45 PM'), 'R. 9 Norte, lote 6/8 loja, 01', '1958765325416532', '71953970', 0.0, 0.00, '30', '50'),
+      (newid(), 'Burger King', 'https://seeklogo.com/images/B/burger-king-new-2021-logo-F43BDE45C7-seeklogo.com.png', 1, 'É uma rede de restaurantes especializada em fast-food, fundada nos Estados Unidos por James McLamore e David Edgerton, que abriram a primeira unidade em Miami, Flórida.', 20, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '04:00 AM'), 'St. A Sul QSA 3/5 PPL, Área Especial 1 s/n', '1958765325416532', '72015034', 0.0, 0.00, '30', '50'),
+      (newid(), 'La Mole', 'https://seeklogo.com/images/R/Restaurante_La_Mole-logo-F9485B7327-seeklogo.com.gif', 3, 'Clássico restaurante italiano inaugurado no Estado do Rio de Janeiro, famoso por seus pratos clássicos agora com poucos cliques direto para sua casa.', 20, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '00:00 AM'), 'R. Dias da Rocha, 31 - loja B', '1958765325416532', '22051020', 0.0, 0.00, '30', '50'),
+      (newid(), 'Taco Bell', 'https://seeklogo.com/images/T/taco-bell-logo-E3BE785EC0-seeklogo.com.png', 5, 'É uma cadeia estadunidense de restaurantes de fast-food, inspirada pela culinária mexicana e fundada por Glen Bell', 15, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '02:00 AM'), 'Av. Pastor Martin Luther King Jr., 126', '1958765325416532', '20765630', 0.0, 0.00, '30', '50'),
+      (newid(), 'Koni Japa', 'https://static.ifood-static.com.br/image/upload/t_high/logosgde/19651995-9e84-4618-b87a-9367502e8873/202203081441_z1Oq_i.jpg', 4, 'É uma rede de franquias de restaurantes fast-food do Brasil que serve pratos e comidas da culinária japonesa, notoriamente variedades de temakis, sashimis e yakissoba.', 20, CONVERT(TIME, '12:00 PM'), CONVERT(TIME, '01:00 AM'), 'Asa Sul Comércio Local Sul 209 BL B', '1958765325416532', '70272520', 0.0, 0.00, '30', '50')
 END
 
 IF NOT EXISTS(SELECT TOP 1 1
