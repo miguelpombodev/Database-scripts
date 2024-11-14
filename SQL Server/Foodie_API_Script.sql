@@ -50,6 +50,7 @@ BEGIN
         Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
         Name VARCHAR(50) NOT NULL,
         Avatar NVARCHAR(MAX),
+	AvatarLongImage NVARCHAR(MAX),
         Created_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
         Updated_At DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
     )
@@ -175,6 +176,19 @@ BEGIN
         CONSTRAINT FK_STORERATE_STORE FOREIGN KEY (Store_Id) REFERENCES stores(Id),
         CONSTRAINT FK_STORERATE_ORDERS FOREIGN KEY (Order_Id) REFERENCES orders(Id)
     )
+END
+
+GO
+IF OBJECT_ID('cart_items') IS NULL
+BEGIN
+	CREATE TABLE cart_items (
+	    Id UNIQUEIDENTIFIER PRIMARY KEY NOT NULL,
+	    Cart_Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_CART_CART_ITEM REFERENCES carts(Id),
+	    Product_Id     uniqueidentifier           NOT NULL CONSTRAINT FK_PRODUCT_CART_ITEM REFERENCES products(Id),
+	    Product_Amount int                        not null,
+	    Created_At         datetime default getdate() not null,
+	    Updated_At         datetime default getdate() not null
+	)
 END
 
 
